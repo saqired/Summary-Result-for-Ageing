@@ -7,7 +7,7 @@ st.set_page_config(page_title="Live Defect Dashboard", layout="centered")
 st.title("🛠️ Live Defect Dashboard (Google Sheets)")
 
 # --- Google Sheet URL (CSV export format) ---
-sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuotFDwz3Gs5cVnYjcMhPovYHUpMsVe6LdHHUIDSJcYVVfII1pVWBXZUriMqEbim6Bs8diKBn9glc7/pub?output=csv"
+sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuotFDwz3Gs5cVnYjcMhPovYHUpMsVe6LdHHUIDSJcYVVfII1pVWBXZUriMqEbim6Bs8diKBn9glc7/pub?gid=1029560887&single=true&output=csv"
 
 # --- Refresh interval ---
 refresh_interval = 10  # seconds
