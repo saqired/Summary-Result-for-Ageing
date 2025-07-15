@@ -2,26 +2,39 @@ import streamlit as st
 import pandas as pd
 
 # --- Page Setup ---
-st.set_page_config(page_title="Ageing Bar Chart", layout="centered")
-st.title("📊 Average Hardness by Alloy-Temper")
+st.set_page_config(page_title="Ageing Table Summary", layout="wide")
+st.title("🧪 Ageing Table Summary")
 
-# --- Simulated Data (replace this with Excel import later) ---
-data = {
-    'Alloy-Temper': ['6060 C80-T6', '6082-T6', '6061-T6'],
-    'Avg Front Hardness': [13, 17, 16],
-    'Avg Back Hardness': [13, 17, 16]
-}
-df_avg = pd.DataFrame(data)
+# --- File Upload ---
+uploaded_file = st.file_uploader("📤 Upload your Ageing Table (Excel format)", type=["xlsx", "xls", "csv"])
 
-# --- Show Table ---
-st.subheader("🧾 Average Hardness Table")
-st.dataframe(df_avg, use_container_width=True)
+if uploaded_file:
+    # Read Excel or CSV
+    if uploaded_file.name.endswith('.csv'):
+        df = pd.read_csv(uploaded_file)
+    else:
+        df = pd.read_excel(uploaded_file)
 
-# --- Bar Chart: Streamlit-native ---
-st.subheader("📈 Bar Chart: Average Hardness")
+    # --- Display Full Table ---
+    st.subheader("📋 Full Ageing Table")
+    st.dataframe(df, use_container_width=True)
 
-# Set index for bar chart
-df_chart = df_avg.set_index('Alloy-Temper')
+    # --- Select hardness columns automatically ---
+    front_cols = [col for col in df.columns if 'Front Hardness' in col]
+    back_cols = [col for col in df.columns if 'Back Hardness' in col]
 
-# Show bar chart
-st.bar_chart(df_chart)
+    # --- Calculate average hardness ---
+    df['Avg Front Hardness'] = df[front_cols].mean(axis=1)
+    df['Avg Back Hardness'] = df[back_cols].mean(axis=1)
+
+    # --- Group by Alloy-Temper and average ---
+    grouped = df.groupby('Alloy-Temper')[['Avg Front Hardness', 'Avg Back Hardness']].mean().round(2)
+
+    st.subheader("📊 Average Hardness per Alloy-Temper")
+    st.dataframe(grouped)
+
+    # --- Bar Chart using Streamlit native chart ---
+    st.bar_chart(grouped)
+
+else:
+    st.info("Please upload a file to display the chart and table.")
