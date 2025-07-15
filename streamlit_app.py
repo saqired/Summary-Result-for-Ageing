@@ -1,40 +1,36 @@
 import streamlit as st
 import pandas as pd
+import time
 
-# --- Page Setup ---
-st.set_page_config(page_title="Ageing Table Summary", layout="wide")
-st.title("🧪 Ageing Table Summary")
+st.set_page_config(page_title="Live Dashboard", layout="wide")
 
-# --- File Upload ---
-uploaded_file = st.file_uploader("📤 Upload your Ageing Table (Excel format)", type=["xlsx", "xls", "csv"])
+st.title("🔄 Live Hardness Dashboard")
 
-if uploaded_file:
-    # Read Excel or CSV
-    if uploaded_file.name.endswith('.csv'):
-        df = pd.read_csv(uploaded_file)
-    else:
-        df = pd.read_excel(uploaded_file)
+# Set refresh interval (seconds)
+refresh_sec = 10
 
-    # --- Display Full Table ---
-    st.subheader("📋 Full Ageing Table")
-    st.dataframe(df, use_container_width=True)
+# Live update loop
+while True:
+    # Load your file (Excel or CSV)
+    df = pd.read_excel("ageing_data.xlsx")  # update path if needed
 
-    # --- Select hardness columns automatically ---
+    # Calculate average hardness by Alloy
     front_cols = [col for col in df.columns if 'Front Hardness' in col]
     back_cols = [col for col in df.columns if 'Back Hardness' in col]
-
-    # --- Calculate average hardness ---
+    
     df['Avg Front Hardness'] = df[front_cols].mean(axis=1)
     df['Avg Back Hardness'] = df[back_cols].mean(axis=1)
 
-    # --- Group by Alloy-Temper and average ---
-    grouped = df.groupby('Alloy-Temper')[['Avg Front Hardness', 'Avg Back Hardness']].mean().round(2)
+    summary = df.groupby("Alloy-Temper")[['Avg Front Hardness', 'Avg Back Hardness']].mean().round(2)
 
-    st.subheader("📊 Average Hardness per Alloy-Temper")
-    st.dataframe(grouped)
+    # Show chart + summary
+    st.subheader("📈 Hardness by Alloy-Temper (Live)")
+    st.bar_chart(summary)
 
-    # --- Bar Chart using Streamlit native chart ---
-    st.bar_chart(grouped)
+    st.subheader("📋 Full Table")
+    st.dataframe(df, use_container_width=True)
 
-else:
-    st.info("Please upload a file to display the chart and table.")
+    # Wait and rerun
+    st.info(f"🔄 Refreshing in {refresh_sec} seconds...")
+    time.sleep(refresh_sec)
+    st.experimental_rerun()
