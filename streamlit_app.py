@@ -11,7 +11,7 @@ st.title("🧪 Live Ageing Dashboard")
 refresh_interval = 10  # seconds
 
 # --- File Path ---
-file_path = "ageing_table.xlsx"  # <- Replace with your actual file name
+file_path = "Summary Result for Ageing.xlsx"  # <- Replace with your actual file name
 
 # --- Display Info ---
 st.info(f"Live dashboard refreshes every {refresh_interval} seconds.")
