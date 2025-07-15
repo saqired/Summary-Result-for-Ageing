@@ -1,62 +1,45 @@
 import streamlit as st
 import pandas as pd
 import time
-import os
 
-# --- Config ---
-st.set_page_config(page_title="Live Ageing Dashboard", layout="wide")
-st.title("🧪 Live Ageing Dashboard")
+# --- Setup ---
+st.set_page_config(page_title="Live Defect Dashboard", layout="centered")
+st.title("🛠️ Live Defect Dashboard (Simulated)")
 
-# --- Refresh Interval ---
+# --- Refresh Rate ---
 refresh_interval = 10  # seconds
+st.caption(f"⏱ Auto-refreshes every {refresh_interval} seconds")
 
-# --- File Path ---
-file_path = "Summary Result for Ageing.xlsx"  # <- Replace with your actual file name
+# --- Static Defect Data (from your screenshot) ---
+defect_data = {
+    'Defect': ['Dented', 'Bubble', 'Tearing', 'Scratch', 'Stopmark', 'White Line', 'Watermark', 'Die Line', 'Others'],
+    'Total': [150, 137, 134, 32, 21, 5, 2, 38, 60]
+}
+df_defect = pd.DataFrame(defect_data).set_index('Defect')
 
-# --- Display Info ---
-st.info(f"Live dashboard refreshes every {refresh_interval} seconds.")
+# --- Simulated Full Table ---
+df_table = pd.DataFrame({
+    '#': [1,2,3,4,5,6,7,8,9,10],
+    'Alloy-Temper': ['6060-T5','6060-T6','6063-T5','6063-T6','6005-T5','6005-T6','6061-T6','6061-T6','6082-T5','6082-T6'],
+    'Dented': [0, 50, 12, 30, 1, 2, 0, 39, 0, 16],
+    'Bubble': [11, 0, 10, 10, 16, 15, 0, 83, 0, 2],
+    'Tearing': [0, 11, 0, 13, 0, 0, 0, 101, 0, 0],
+    'Scratch': [0, 0, 2, 2, 0, 0, 0, 5, 0, 0],
+    'Stopmark': [1, 3, 2, 0, 0, 0, 0, 17, 0, 0],
+    'White Line': [2, 0, 0, 0, 0, 0, 0, 8, 0, 0],
+    'Watermark': [0, 0, 0, 0, 0, 0, 0, 2, 0, 0],
+    'Die Line': [0, 29, 0, 0, 0, 0, 0, 9, 0, 0],
+    'Others': [3, 2, 0, 0, 1, 1, 0, 45, 0, 1]
+})
 
-# --- Infinite Refresh Loop ---
-while True:
-    try:
-        # --- Load File ---
-        if file_path.endswith('.csv'):
-            df = pd.read_csv(file_path)
-        else:
-            df = pd.read_excel(file_path)
+# --- Main Display ---
+st.subheader("📈 Total Number vs. Defects (Bar Chart)")
+st.bar_chart(df_defect)
 
-        # --- Detect Front & Back Hardness Columns ---
-        front_cols = [col for col in df.columns if 'Front Hardness' in col]
-        back_cols = [col for col in df.columns if 'Back Hardness' in col]
+st.subheader("📋 Defect Breakdown Table")
+st.dataframe(df_table, use_container_width=True)
 
-        # --- Calculate Averages ---
-        df['Avg Front Hardness'] = df[front_cols].mean(axis=1)
-        df['Avg Back Hardness'] = df[back_cols].mean(axis=1)
-
-        # --- Group by Alloy-Temper ---
-        summary = df.groupby('Alloy-Temper')[['Avg Front Hardness', 'Avg Back Hardness']].mean().round(2)
-
-        # --- Layout ---
-        col1, col2 = st.columns([2, 1])
-
-        with col1:
-            st.subheader("📈 Hardness Chart by Alloy-Temper")
-            st.bar_chart(summary)
-
-        with col2:
-            st.subheader("🔢 Summary Table")
-            st.dataframe(summary)
-
-        st.divider()
-
-        # --- Show full table if needed ---
-        with st.expander("📋 Show Full Table"):
-            st.dataframe(df, use_container_width=True)
-
-        # --- Wait and refresh ---
-        time.sleep(refresh_interval)
-        st.rerun()
-
-    except Exception as e:
-        st.error(f"Something went wrong: {e}")
-        break
+# --- Simulated Refresh ---
+st.toast("🔁 Refreshing data...")
+time.sleep(refresh_interval)
+st.rerun()
