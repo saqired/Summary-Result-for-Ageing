@@ -7,7 +7,8 @@ st.title("🛠️ Live Defect Dashboard (Google Sheet Connected)")
 
 # Google Sheets CSV export link
 sheet_url = sheet_url = (
-   sheet_url = https://docs.google.com/spreadsheets/d/2PACX-1vRuotFDwz3Gs5cVnYjcMhPovYHUpMsVe6LdHHUIDSJcYVVfII1pVWBXZUriMqEbim6Bs8diKBn9glc7/export?format=csv)
+   sheet_url = https://docs.google.com/spreadsheets/d/e/2PACX-1vRuotFDwz3Gs5cVnYjcMhPovYHUpMsVe6LdHHUIDSJcYVVfII1pVWBXZUriMqEbim6Bs8diKBn9glc7/pub?output=csv
+)
 
 refresh_interval = 10
 st.caption(f"⏱ Auto-refreshes every {refresh_interval} seconds")
